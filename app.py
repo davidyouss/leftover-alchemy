@@ -52,26 +52,34 @@ with st.form("alchemy_form"):
     submitted = st.form_submit_button("Generate Concepts")
 
 # --- LOGIC ---
+# --- LOGIC ---
 if submitted and ingredients:
-    # Use 'final_vibe' instead of 'vibe' in your payload
-    payload = {
-        "ingredients": ingredients, 
-        "meal_type": "Dinner",  # You can hardcode this or keep the selectbox
-        "vibe": final_vibe      # <--- IMPORTANT CHANGE
-    } 
-            # --- THE MICHELIN STAR UI ---
+    # Use 'final_vibe' if you added the dropdown logic, otherwise just 'vibe'
+    # Check if 'final_vibe' exists in your code, if not, change this back to 'vibe'
+    current_vibe = final_vibe if 'final_vibe' in locals() else vibe
+
+    with st.spinner("Transmuting elements..."):
+        try:
+            # 1. Prepare the payload
+            payload = {
+                "ingredients": ingredients,
+                "meal_type": meal_type,
+                "vibe": current_vibe
+            }
+            
+            # 2. Send to backend
+            response = requests.post(BACKEND_URL, json=payload)
+            response.raise_for_status()
+            data = response.json()
+            
+            # 3. Check for recipes (Align this EXACTLY with 'data =' above)
             if "recipes" in data:
                 for r in data["recipes"]:
-                    # The Expander creates the dropdown card effect
                     with st.expander(f"🏆 {r['title']}", expanded=True):
-                        
-                        # The Blue Box for "The Hook"
                         st.info(f"🧠 **The Hook:** {r.get('vibe_description', 'A perfect match.')}")
-                        
                         st.markdown("### 🔪 The Steps:")
                         for step in r['instructions']:
                             st.write(f"* {step}")
-                            
                         st.divider()
                         st.caption(f"**Ingredients:** {', '.join(r['ingredients'])}")
             else:
