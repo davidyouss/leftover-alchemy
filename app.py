@@ -19,15 +19,21 @@ st.caption("Turning fridge sadness into belly happiness. 😋")
 # --- INPUTS ---
 with st.form("alchemy_form"):
     col1, col2 = st.columns([2, 1])
+    
     with col1:
         ingredients = st.text_input("What's in the fridge?", placeholder="e.g., 2 eggs, stale bread, cheese")
+    
     with col2:
         meal_type = st.selectbox("Meal Type", ["Breakfast", "Lunch", "Dinner", "Snack"])
+        
+        # --- Vibe Examples ---
+        st.markdown("✨ **Inspiration:**")
+        st.caption("*Michelin Star • Hangover Cure • Date Night • Zombie Apocalypse • 3AM Chaos*")
         
         # Free-Text Vibe Input
         vibe_input = st.text_input(
             "Current Vibe", 
-            placeholder="e.g., Michelin Star, Hangover Cure..."
+            placeholder="Type your vibe here..."
         )
     
     submitted = st.form_submit_button("Generate Concepts")
@@ -45,7 +51,7 @@ if submitted and ingredients:
             payload = {"ingredients": ingredients, "meal_type": meal_type, "vibe": vibe}
             
             response = requests.post(BACKEND_URL, json=payload)
-            response.raise_for_status() # This triggers the HTTPError block below if it fails
+            response.raise_for_status() 
             data = response.json()
             
             # --- THE MICHELIN STAR UI ---
@@ -65,7 +71,6 @@ if submitted and ingredients:
 
         # --- ERROR HANDLING ---
         except requests.exceptions.HTTPError as http_err:
-            # This captures the 500 error text from the backend
             st.error(f"🔥 Backend Crash: {response.text}")
         except Exception as e:
             st.error(f"Connection failed: {e}")
