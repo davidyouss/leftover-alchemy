@@ -51,7 +51,12 @@ if st.button("Generate Recipe"):
                     for r in recipes:
                         st.divider()
                         st.subheader(r['title'])
-                        
+        
+                        # Display the new "vibe" description here
+                        st.info(f"✨ {r['vibe_description']}") 
+        
+                        # ... rest of your display logic
+
                         
                         st.write("**Ingredients:**")
                         st.write(", ".join(r['ingredients']))

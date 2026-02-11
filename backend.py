@@ -21,6 +21,7 @@ class IngredientRequest(BaseModel):
 
 class Recipe(BaseModel):
     title: str
+    vibe_description: str
     ingredients: List[str]
     instructions: List[str]
     image_keyword: str
@@ -30,10 +31,12 @@ class RecipeResponse(BaseModel):
 
 @app.post("/generate-recipes", response_model=RecipeResponse)
 async def generate_recipes(request: IngredientRequest):
+# Updated prompt to explicitly ask for the "why it's a hit" logic
     prompt = (
-        f"Role: Master Chef. Task: Create 3 recipes using {request.ingredients}. "
+        f"Role: Master Alchemist Chef. Task: Create 3 recipes using {request.ingredients}. "
         f"Meal Type: {request.meal_type}. Vibe: {request.vibe}. "
-        "Return JSON with 'title', 'ingredients' (list), 'instructions' (list), and 'image_keyword'."
+        "For the 'vibe_description', write a witty 2-sentence intro explaining why this "
+        "specific dish perfectly matches the requested vibe and why it will be a hit."
     )
 
     try:
