@@ -52,9 +52,6 @@ if st.button("Generate Recipe"):
                         st.divider()
                         st.subheader(r['title'])
                         
-                        # Fake Image Logic (Unsplash)
-                        image_url = f"https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=800&keyword={r.get('image_keyword', 'food')}"
-                        st.image(image_url, caption=f"Visual inspiration for {r['title']}")
                         
                         st.write("**Ingredients:**")
                         st.write(", ".join(r['ingredients']))
