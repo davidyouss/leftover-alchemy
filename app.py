@@ -14,7 +14,7 @@ st.title("🍳 Leftover Alchemy")
 st.caption("Turn fridge sadness into Instagram gold.")
 
 # --- NEW PATIENCE HEADER ---
-st.warning("⚡ **Note to Foodies:** If the app has been resting, the 'Chef' (our server) takes about 60 seconds to wake up for the first request of the day. Thanks for your patience!")
+st.warning("⚡ **Patience is an Ingredient: Good things take time! If the results don't appear instantly, our AI is just warming up. It'll be worth the wait, I promise.")
 # ---------------------------
 
 col1, col2 = st.columns(2)
