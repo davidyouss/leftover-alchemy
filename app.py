@@ -29,15 +29,10 @@ if st.button("Generate Concepts", type="primary"):
     with st.spinner("Performing a little alchemy with what you've got..."):
         try:
             # Send data to your backend
-		payload = {
-    "ingredients": ingredients_input,
-    "meal_type": meal_choice,
-    "vibe": vibe_choice
-    }
     payload = {
-        "ingredients": ingredients_input,
-        "meal_type": meal_choice,
-        "vibe": vibe_choice
+       "ingredients": ingredients_input,
+       "meal_type": meal_choice,
+       "vibe": vibe_choice
     }
             response = requests.post(API_URL, json=payload)
             
