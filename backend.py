@@ -10,15 +10,12 @@ load_dotenv()
 api_key = os.getenv("GOOGLE_API_KEY")
 client = genai.Client(api_key=api_key)
 
-app = FastAPI(title="Leftover Alchemy: Modern Logic Edition")
+app = FastAPI()
 
-# --- DATA MODELS ---
 class IngredientRequest(BaseModel):
     ingredients: str
     meal_type: str
-    vibe: str #added back  
-
-# This matches the dropdown we're adding to the frontend
+    vibe: str
 
 class Recipe(BaseModel):
     title: str
@@ -29,15 +26,15 @@ class Recipe(BaseModel):
 class RecipeResponse(BaseModel):
     recipes: List[Recipe]
 
-# --- API ENDPOINT ---
 @app.post("/generate-recipes", response_model=RecipeResponse)
 async def generate_recipes(request: IngredientRequest):
-    # We update the prompt to include the meal_type constraint
     prompt = (
-    f"You are a master chef. Create 3 creative recipes using: {request.ingredients}. "
-    f"The recipes MUST be for {request.meal_type} and match a '{request.vibe}' vibe. "
-    "Return the response in a structured JSON format..."
-)	    
+        f"Role: Master Chef. Task: Create 3 recipes.\n"
+        f"Ingredients available: {request.ingredients}\n"
+        f"Meal Type: {request.meal_type}\n"
+        f"Vibe/Style: {request.vibe}\n"
+        f"Format: Return JSON with title, ingredients (list), instructions (list), and a 1-word image_keyword."
+    )
 
     try:
         response = client.models.generate_content(
@@ -50,7 +47,6 @@ async def generate_recipes(request: IngredientRequest):
         )
         return response.parsed
     except Exception as e:
+        # This will print the REAL error to your Render logs
+        print(f"ALCHEMIST ERROR: {e}")
         raise HTTPException(status_code=500, detail=str(e))
-
-
-
