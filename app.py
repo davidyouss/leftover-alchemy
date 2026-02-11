@@ -1,64 +1,69 @@
 import streamlit as st
 import requests
 
-# 1. Config
+# --- CONFIGURATION ---
+# Replace this with your actual Render URL
 API_URL = "https://leftover-backend-3gdf.onrender.com/generate-recipes"
 
-st.set_page_config(page_title="The Rut Buster", page_icon="🍳")
+st.set_page_config(page_title="Leftover Alchemy", page_icon="🍳")
 
-# 2. The UI Layout
 st.title("🍳 Leftover Alchemy")
-st.caption("Turn random ingredients into culinary experiments that actually work.")
+st.caption("The best meal is the one you don't have to go to the store for.")
 
+# Patience Header
+st.warning("⚡ **Note:** If the app has been resting, the 'Chef' takes about 60 seconds to wake up for the first request. Thanks for your patience!")
 
-# --- NEW PATIENCE HEADER ---
-st.warning("⚡ **Patience is an Ingredient: Good things take time! If the results don't appear instantly, our AI is just warming up. It'll be worth the wait, I promise.")
-# ---------------------------
+# --- INPUT SECTION ---
+ingredients_input = st.text_input("What's in your fridge?", placeholder="e.g. eggs, spinach, leftover rice")
 
 col1, col2 = st.columns(2)
-# ... the rest of your code ...
-# Input Section
-col1, col2 = st.columns(2)
+
 with col1:
-    ingredients = st.text_input("What's in the fridge?", "canned tuna, hot sauce, rice")
+    meal_choice = st.selectbox(
+        "What are we making?",
+        ["Breakfast", "Lunch", "Dinner", "Snack", "Surprise Me"]
+    )
+
 with col2:
-    meal_choice = st.selectbox("What are we making?", ["Breakfast", "Lunch", "Dinner", "Snack"])
-vibe_choice = st.text_input("What's the vibe?", placeholder="e.g. Cozy, Fancy, Lazy, High-Protein")
-# 3. The Logic
-if st.button("Generate Concepts", type="primary"):
-    with st.spinner("Performing a little alchemy with what you've got..."):
-        try:
-            # Send data to your backend
-    payload = {
-       "ingredients": ingredients_input,
-       "meal_type": meal_choice,
-       "vibe": vibe_choice
-    }
-            response = requests.post(API_URL, json=payload)
-            
-            if response.status_code == 200:
+    vibe_choice = st.text_input("What's the vibe?", placeholder="e.g. Cozy, Lazy, Fancy")
+
+# --- EXECUTION ---
+if st.button("Transmute Ingredients"):
+    if ingredients_input:
+        # Your custom spinner message
+        with st.spinner("Performing a little alchemy with what you've got... 🪄"):
+            payload = {
+                "ingredients": ingredients_input,
+                "meal_type": meal_choice,
+                "vibe": vibe_choice
             }
-            response = requests.post(API_URL, json=payload)
             
-            if response.status_code == 200:
-            }
-            response = requests.post(API_URL, json=payload)
-            
-            if response.status_code == 200:
-                data = response.json()
-                recipes = data.get("recipes", [])
+            try:
+                response = requests.post(API_URL, json=payload)
                 
-                # Display Results
-                for r in recipes:
-                    with st.expander(f"🏆 {r['title']} (Intrigue: {r['intrigue_score']}/100)", expanded=True):
-                        st.markdown(f"_{r['description']}_")
-                        st.info(f"**🧠 The Hook:** {r['psychological_hook']}")
+                if response.status_code == 200:
+                    data = response.json()
+                    recipes = data.get("recipes", [])
+                    
+                    for r in recipes:
+                        st.divider()
+                        st.subheader(r['title'])
                         
-                        st.write("### 🔪 The Steps:")
-                        for step in r['steps']:
+                        # Fake Image Logic (Unsplash)
+                        image_url = f"https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=800&keyword={r.get('image_keyword', 'food')}"
+                        st.image(image_url, caption=f"Visual inspiration for {r['title']}")
+                        
+                        st.write("**Ingredients:**")
+                        st.write(", ".join(r['ingredients']))
+                        
+                        st.write("**Instructions:**")
+                        for step in r['instructions']:
                             st.write(f"- {step}")
-            else:
-                st.error(f"Kitchen Error: {response.text}")
-                
-        except Exception as e:
-            st.error(f"Connection failed. Is the backend running? ({e})")
+                else:
+                    st.error(f"The Alchemist is struggling (Error {response.status_code}). Check your Backend logs!")
+            
+            except Exception as e:
+                st.error(f"Connection Error: {e}")
+    else:
+        st.info("Please enter some ingredients first!")
+
