@@ -33,13 +33,12 @@ if st.button("Generate Concepts", type="primary"):
     "ingredients": ingredients_input,
     "meal_type": meal_choice,
     "vibe": vibe_choice
-}
-            
-payload = {
-    "ingredients": ingredients_input,
-    "meal_type": meal_choice,
-    "vibe": vibe_choice
-}
+    }
+    payload = {
+        "ingredients": ingredients_input,
+        "meal_type": meal_choice,
+        "vibe": vibe_choice
+    }
             response = requests.post(API_URL, json=payload)
             
             if response.status_code == 200:
