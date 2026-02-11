@@ -25,22 +25,19 @@ with st.form("alchemy_form"):
             "What's in the fridge?", 
             placeholder="e.g., 2 eggs, stale bread, cheese"
         )
-        
+    
     with col2:
-        # Radio buttons allow instant selection and prevent "search" errors
-        # Note: Using a vertical list (horizontal=False) so "Custom" is clear
-        selected_vibe = st.radio(
-            "Current Vibe",
-            ["Lazy & Quick", "Michelin Star", "Healthy & Clean", "Hangover Cure", "Custom..."],
-            horizontal=False 
+        meal_type = st.selectbox("Meal Type", ["Breakfast", "Lunch", "Dinner", "Snack"])
+        
+        # New Free-Text Vibe Input
+        vibe = st.text_input(
+            "Current Vibe", 
+            placeholder="e.g., Michelin Star, Hangover Cure, Gothic Dinner Party..."
         )
-
-        # Show the text input ONLY if they clicked "Custom..."
-        if selected_vibe == "Custom...":
-            custom_vibe = st.text_input("Describe your vibe", placeholder="e.g. Chinese Takeout")
-            final_vibe = custom_vibe
-        else:
-            final_vibe = selected_vibe
+        
+        # Default if they leave it empty
+        if not vibe:
+            vibe = "General Creative Cooking"        
 
     submitted = st.form_submit_button("Generate Concepts")
 
