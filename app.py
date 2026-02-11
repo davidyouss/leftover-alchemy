@@ -58,9 +58,7 @@ if submitted and ingredients:
         "ingredients": ingredients, 
         "meal_type": "Dinner",  # You can hardcode this or keep the selectbox
         "vibe": final_vibe      # <--- IMPORTANT CHANGE
-    }
-   
-            
+    } 
             # --- THE MICHELIN STAR UI ---
             if "recipes" in data:
                 for r in data["recipes"]:
