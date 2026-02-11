@@ -42,11 +42,10 @@ if submitted and ingredients:
 
     with st.spinner("Transmuting elements..."):
         try:
-            # We use 'vibe' here, which is definitely defined now
             payload = {"ingredients": ingredients, "meal_type": meal_type, "vibe": vibe}
             
             response = requests.post(BACKEND_URL, json=payload)
-            response.raise_for_status()
+            response.raise_for_status() # This triggers the HTTPError block below if it fails
             data = response.json()
             
             # --- THE MICHELIN STAR UI ---
@@ -64,8 +63,9 @@ if submitted and ingredients:
             else:
                 st.error("The Alchemist returned empty-handed.")
 
-except requests.exceptions.HTTPError as http_err:
-            # This prints the specific error from the backend (e.g., "Quota Exceeded")
-            st.error(f"🔥 Backend Crash: {http_err.response.text}")
+        # --- ERROR HANDLING ---
+        except requests.exceptions.HTTPError as http_err:
+            # This captures the 500 error text from the backend
+            st.error(f"🔥 Backend Crash: {response.text}")
         except Exception as e:
             st.error(f"Connection failed: {e}")
