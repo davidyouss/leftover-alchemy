@@ -63,6 +63,9 @@ if submitted and ingredients:
                         st.caption(f"**Ingredients:** {', '.join(r['ingredients'])}")
             else:
                 st.error("The Alchemist returned empty-handed.")
-                
+
+except requests.exceptions.HTTPError as http_err:
+            # This prints the specific error from the backend (e.g., "Quota Exceeded")
+            st.error(f"🔥 Backend Crash: {http_err.response.text}")
         except Exception as e:
             st.error(f"Connection failed: {e}")
