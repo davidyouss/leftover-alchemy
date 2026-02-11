@@ -19,22 +19,47 @@ st.caption("Turning fridge sadness into belly happiness.")
 # --- INPUTS ---
 with st.form("alchemy_form"):
     col1, col2 = st.columns([2, 1])
-    with col1:
-        ingredients = st.text_input("What's in the fridge?", placeholder="e.g., 2 eggs, stale bread, cheese")
-    with col2:
-        meal_type = st.selectbox("Meal Type", ["Breakfast", "Lunch", "Dinner", "Snack"])
-        vibe = st.selectbox("Current Vibe", ["Lazy & Quick", "Michelin Star", "Healthy & Clean", "Comfort Food", "Chaos Cooking"])
     
+    with col1:
+        ingredients = st.text_input(
+            "What's in the fridge?", 
+            placeholder="e.g., 2 eggs, stale bread, cheese"
+        )
+        
+    with col2:
+        # The "Pre-populated" choices
+        vibe_options = [
+            "Lazy & Quick", 
+            "Healthy & Clean", 
+            "Michelin Chef", 
+            "Hangover Cure", 
+            "High Protein", 
+            "✨ Custom Vibe..."  # The "Escape Hatch"
+        ]
+        
+        # User picks from the list
+        selected_vibe = st.selectbox("Vibe Check", vibe_options)
+        
+        # Logic: If they picked 'Custom', show a text box. 
+        # Otherwise, use what they picked.
+        if selected_vibe == "✨ Custom Vibe...":
+            custom_vibe = st.text_input("Describe your vibe", placeholder="e.g. 1950s Diner")
+            final_vibe = custom_vibe
+        else:
+            final_vibe = selected_vibe
+
+    # The button now submits the 'final_vibe'
     submitted = st.form_submit_button("Generate Concepts")
 
 # --- LOGIC ---
 if submitted and ingredients:
-    with st.spinner("Generating recipes..."):
-        try:
-            payload = {"ingredients": ingredients, "meal_type": meal_type, "vibe": vibe}
-            response = requests.post(BACKEND_URL, json=payload)
-            response.raise_for_status()
-            data = response.json()
+    # Use 'final_vibe' instead of 'vibe' in your payload
+    payload = {
+        "ingredients": ingredients, 
+        "meal_type": "Dinner",  # You can hardcode this or keep the selectbox
+        "vibe": final_vibe      # <--- IMPORTANT CHANGE
+    }
+   
             
             # --- THE MICHELIN STAR UI ---
             if "recipes" in data:
