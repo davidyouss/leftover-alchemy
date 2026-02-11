@@ -1,5 +1,3 @@
-import streamlit as st
-import requests
 
 # --- CONFIG ---
 st.set_page_config(page_title="Leftover Alchemy", page_icon="🍳")
@@ -26,6 +24,7 @@ with st.form("alchemy_form"):
             placeholder="e.g., 2 eggs, stale bread, cheese"
         )
         
+
     with col2:
         # The "Pre-populated" choices
         vibe_options = [
@@ -51,7 +50,6 @@ with st.form("alchemy_form"):
     # The button now submits the 'final_vibe'
     submitted = st.form_submit_button("Generate Concepts")
 
-# --- LOGIC ---
 # --- LOGIC ---
 if submitted and ingredients:
     # Use 'final_vibe' if you added the dropdown logic, otherwise just 'vibe'
