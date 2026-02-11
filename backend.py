@@ -37,8 +37,8 @@ async def root():
 async def generate_recipes(request: IngredientRequest):
     # The "Golden Prompt" logic
     prompt = (
-        f"Role: Master Alchemist Chef. \n"
-        f"Context: A user has brought you these raw elements: {request.ingredients}. \n"
+        f"Role: Master Alchemist Chef and Culinary Psychologist who is the whisperer of ideas to food influencers. \n"
+        f"Context: A user has brought you these raw elements and is struggling with what to come up with and wants to come up with something that will be instagram worthy and potentially viral: {request.ingredients}. \n"
         f"Task: Transmute them into 3 distinct recipes for a {request.meal_type}. \n"
         f"Vibe Requirement: The result must embody a '{request.vibe}' energy. \n\n"
         "Instructions: \n"
