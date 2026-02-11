@@ -31,13 +31,21 @@ class RecipeResponse(BaseModel):
 
 @app.post("/generate-recipes", response_model=RecipeResponse)
 async def generate_recipes(request: IngredientRequest):
-# Updated prompt to explicitly ask for the "why it's a hit" logic
-    prompt = (
-        f"Role: Master Alchemist Chef. Task: Create 3 recipes using {request.ingredients}. "
-        f"Meal Type: {request.meal_type}. Vibe: {request.vibe}. "
-        "For the 'vibe_description', write a witty 2-sentence intro explaining why this "
-        "specific dish perfectly matches the requested vibe and why it will be a hit."
+
+prompt = (
+        f"Role: Master Alchemist Chef/Culinary Psychologist. \n"
+        f"Context: A user is stuck in a rut and can't think of what to make for their meal/snack an has brought you these raw elements: {request.ingredients}. \n"
+        f"Task: Transmute them into 3 distinct recipes for a {request.meal_type}. \n"
+        f"Vibe Requirement: The result must embody a '{request.vibe}' energy. \n\n"
+        "Instructions: \n"
+        "1. For the 'vibe_description', write a witty, 2-sentence intro. Explain the 'culinary alchemy' "
+        "behind why these ingredients were chosen to match the vibe and why the dish will be a hit. \n"
+        "2. Ensure the 'title' is creative and thematic. \n"
+        "3. Provide clear 'ingredients' and 'instructions' lists. \n"
+        "4. Provide a 1-word 'image_keyword' for a food aesthetic search. \n\n"
+        "Return ONLY structured JSON matching the provided schema."
     )
+
 
     try:
         # We use the 2.0-flash model which is the 2026 stable standard
