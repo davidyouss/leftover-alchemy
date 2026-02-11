@@ -6,12 +6,14 @@ from google import genai
 from dotenv import load_dotenv
 
 load_dotenv()
+
 api_key = os.getenv("GOOGLE_API_KEY")
+
+# Remove the 'api_version' pinning to allow the modern v1beta features
 client = genai.Client(api_key=api_key)
 
-app = FastAPI(title="Leftover Alchemy")
+app = FastAPI(title="Leftover Alchemy: Stabilized Edition")
 
-# --- DATA MODELS ---
 class IngredientRequest(BaseModel):
     ingredients: str
     meal_type: str
@@ -19,38 +21,42 @@ class IngredientRequest(BaseModel):
 
 class Recipe(BaseModel):
     title: str
-    vibe_description: str  # The "Hook"
+    vibe_description: str
     ingredients: List[str]
     instructions: List[str]
+    image_keyword: str
 
 class RecipeResponse(BaseModel):
     recipes: List[Recipe]
 
-# --- SAFE ENDPOINT FOR CRON JOB (DOES NOT USE AI) ---
-@app.get("/")
-async def root():
-    # This is just a ping. It costs $0 and uses 0 quota.
-    return {"status": "The Alchemist is awake and ready."}
-
-# --- COOKING ENDPOINT (USES AI) ---
 @app.post("/generate-recipes", response_model=RecipeResponse)
 async def generate_recipes(request: IngredientRequest):
-    # The "Golden Prompt" logic
-    prompt = (
+
+prompt = (
         f"Role: Master Alchemist Chef. \n"
         f"Context: A user has brought you these raw elements: {request.ingredients}. \n"
         f"Task: Transmute them into 3 distinct recipes for a {request.meal_type}. \n"
         f"Vibe Requirement: The result must embody a '{request.vibe}' energy. \n\n"
         "Instructions: \n"
-        "1. For 'vibe_description', write a witty, 2-sentence hook explaining why this dish fits the vibe. \n"
-        "2. Ensure the 'title' is creative. \n"
-        "3. Provide clear ingredients and instructions. \n"
-        "Return ONLY structured JSON."
+        "1. For the 'vibe_description', write a witty, 2-sentence intro. Explain the 'culinary alchemy' "
+        "behind why these ingredients were chosen to match the vibe and why the dish will be a hit. \n"
+        "2. Ensure the 'title' is creative and thematic. \n"
+        "3. Provide clear 'ingredients' and 'instructions' lists. \n"
+        "4. Provide a 1-word 'image_keyword' for a food aesthetic search. \n\n"
+        "Return ONLY structured JSON matching the provided schema."
     )
 
+# Updated prompt to explicitly ask for the "why it's a hit" logic
+    prompt = (
+        f"Role: Master Alchemist Chef. Task: Create 3 recipes using {request.ingredients}. "
+        f"Meal Type: {request.meal_type}. Vibe: {request.vibe}. "
+        "For the 'vibe_description', write a witty 2-sentence intro explaining why this "
+        "specific dish perfectly matches the requested vibe and why it will be a hit."
+
     try:
+        # We use the 2.0-flash model which is the 2026 stable standard
         response = client.models.generate_content(
-            model="gemini-2.0-flash",
+            model="gemini-2.0-flash", 
             contents=prompt,
             config={
                 "response_mime_type": "application/json",
@@ -58,5 +64,7 @@ async def generate_recipes(request: IngredientRequest):
             }
         )
         return response.parsed
+    
     except Exception as e:
+        print(f"🔥 ALCHEMIST ERROR: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))

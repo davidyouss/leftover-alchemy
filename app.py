@@ -1,74 +1,58 @@
 import streamlit as st
 import requests
 
-# --- CONFIGURATION ---
-# Replace this with your actual Render URL
-API_URL = "https://leftover-backend-3gdf.onrender.com/generate-recipes"
-
+# --- CONFIG ---
 st.set_page_config(page_title="Leftover Alchemy", page_icon="🍳")
+BACKEND_URL = "https://leftover-backend-3gdf.onrender.com/generate-recipes" 
 
+# --- STYLING ---
+st.markdown("""
+    <style>
+    .stButton>button { width: 100%; border-radius: 20px; font-weight: bold; }
+    </style>
+""", unsafe_allow_html=True)
+
+# --- HEADER ---
 st.title("🍳 Leftover Alchemy")
-st.caption("The best meal is the one you don't have to go to the store for.")
+st.caption("Turn your random groceries into Michelin-star concepts.")
 
-# Patience Header
-st.warning("⚡ **Note:** If the app has been resting, the 'Chef' takes about 60 seconds to wake up for the first request. Thanks for your patience!")
+# --- INPUTS ---
+with st.form("alchemy_form"):
+    col1, col2 = st.columns([2, 1])
+    with col1:
+        ingredients = st.text_input("What's in the fridge?", placeholder="e.g., 2 eggs, stale bread, cheese")
+    with col2:
+        meal_type = st.selectbox("Meal Type", ["Breakfast", "Lunch", "Dinner", "Snack"])
+        vibe = st.selectbox("Current Vibe", ["Lazy & Quick", "Michelin Star", "Healthy & Clean", "Comfort Food", "Chaos Cooking"])
+    
+    submitted = st.form_submit_button("Generate Concepts")
 
-# --- INPUT SECTION ---
-ingredients_input = st.text_input("What's in your fridge?", placeholder="e.g. eggs, spinach, leftover rice")
-
-col1, col2 = st.columns(2)
-
-with col1:
-    meal_choice = st.selectbox(
-        "What are we making?",
-        ["Breakfast", "Lunch", "Dinner", "Snack", "Surprise Me"]
-    )
-
-with col2:
-    vibe_choice = st.selectbox(
-        "What's the vibe?",
-        ["Lazy & Simple", "Fancy Date Night", "Healthy & Clean", "High Protein", "Michelin Chef", "Cheat Meal", "Hangover Cure", "Surprise Me"]
-    )
-
-# --- EXECUTION ---
-if st.button("Generate Recipe"):
-    if ingredients_input:
-        # Your custom spinner message
-        with st.spinner("Performing a little alchemy with what you've got... 🪄"):
-            payload = {
-                "ingredients": ingredients_input,
-                "meal_type": meal_choice,
-                "vibe": vibe_choice
-            }
+# --- LOGIC ---
+if submitted and ingredients:
+    with st.spinner("Generating recipes..."):
+        try:
+            payload = {"ingredients": ingredients, "meal_type": meal_type, "vibe": vibe}
+            response = requests.post(BACKEND_URL, json=payload)
+            response.raise_for_status()
+            data = response.json()
             
-            try:
-                response = requests.post(API_URL, json=payload)
-                
-                if response.status_code == 200:
-                    data = response.json()
-                    recipes = data.get("recipes", [])
-                    
-                    for r in recipes:
-                        st.divider()
-                        st.subheader(r['title'])
-        
-                        # Display the new "vibe" description here
-                        st.info(f"✨ {r['vibe_description']}") 
-        
-                        # ... rest of your display logic
-
+            # --- THE MICHELIN STAR UI ---
+            if "recipes" in data:
+                for r in data["recipes"]:
+                    # The Expander creates the dropdown card effect
+                    with st.expander(f"🏆 {r['title']}", expanded=True):
                         
-                        st.write("**Ingredients:**")
-                        st.write(", ".join(r['ingredients']))
+                        # The Blue Box for "The Hook"
+                        st.info(f"🧠 **The Hook:** {r.get('vibe_description', 'A perfect match.')}")
                         
-                        st.write("**Instructions:**")
+                        st.markdown("### 🔪 The Steps:")
                         for step in r['instructions']:
-                            st.write(f"- {step}")
-                else:
-                    st.error(f"The Alchemist is struggling (Error {response.status_code}). Check your Backend logs!")
-            
-            except Exception as e:
-                st.error(f"Connection Error: {e}")
-    else:
-        st.info("Please enter some ingredients first!")
-
+                            st.write(f"* {step}")
+                            
+                        st.divider()
+                        st.caption(f"**Ingredients:** {', '.join(r['ingredients'])}")
+            else:
+                st.error("The Alchemist returned empty-handed.")
+                
+        except Exception as e:
+            st.error(f"Connection failed: {e}")
