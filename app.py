@@ -10,6 +10,15 @@ st.set_page_config(page_title="The Rut Buster", page_icon="🍳")
 st.title("🍳 Leftover Alchemy")
 st.caption("Turn fridge sadness into Instagram gold.")
 
+st.title("🍳 Leftover Alchemy")
+st.caption("Turn fridge sadness into Instagram gold.")
+
+# --- NEW PATIENCE HEADER ---
+st.warning("⚡ **Note to Foodies:** If the app has been resting, the 'Chef' (our server) takes about 60 seconds to wake up for the first request of the day. Thanks for your patience!")
+# ---------------------------
+
+col1, col2 = st.columns(2)
+# ... the rest of your code ...
 # Input Section
 col1, col2 = st.columns(2)
 with col1:
