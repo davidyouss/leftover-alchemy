@@ -25,7 +25,10 @@ with col1:
     )
 
 with col2:
-    vibe_choice = st.text_input("What's the vibe?", placeholder="e.g. Cozy, Lazy, Fancy")
+    vibe_choice = st.selectbox(
+        "What's the vibe?",
+        ["Lazy & Simple", "Fancy Date Night", "Healthy & Clean", "High Protein", "Michelin Chef", "Cheat Meal", "Hangover Cure", "Surprise Me"]
+    )
 
 # --- EXECUTION ---
 if st.button("Generate Recipe"):
