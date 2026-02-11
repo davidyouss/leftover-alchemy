@@ -28,7 +28,7 @@ with col2:
     vibe_choice = st.text_input("What's the vibe?", placeholder="e.g. Cozy, Lazy, Fancy")
 
 # --- EXECUTION ---
-if st.button("Transmute Ingredients"):
+if st.button("Generate Recipe"):
     if ingredients_input:
         # Your custom spinner message
         with st.spinner("Performing a little alchemy with what you've got... 🪄"):
