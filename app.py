@@ -8,10 +8,8 @@ st.set_page_config(page_title="The Rut Buster", page_icon="🍳")
 
 # 2. The UI Layout
 st.title("🍳 Leftover Alchemy")
-st.caption("Turn fridge sadness into Instagram gold.")
+st.caption("Turn random ingredients into culinary experiments that actually work.")
 
-st.title("🍳 Leftover Alchemy")
-st.caption("Turn fridge sadness into Instagram gold.")
 
 # --- NEW PATIENCE HEADER ---
 st.warning("⚡ **Patience is an Ingredient: Good things take time! If the results don't appear instantly, our AI is just warming up. It'll be worth the wait, I promise.")
