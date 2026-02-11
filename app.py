@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 
 # 1. Config
-API_URL = "https://leftover-backend.onrender.com/generate-recipes"
+API_URL = "https://leftover-backend-3gdf.onrender.com/generate-recipes"
 
 st.set_page_config(page_title="The Rut Buster", page_icon="🍳")
 
