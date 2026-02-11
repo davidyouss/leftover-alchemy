@@ -1,7 +1,9 @@
+import streamlit as st
+import requests
 
 # --- CONFIG ---
 st.set_page_config(page_title="Leftover Alchemy", page_icon="🍳")
-BACKEND_URL = "https://leftover-backend-3gdf.onrender.com/generate-recipes" 
+BACKEND_URL = "https://leftover-backend-3gdf.onrender.com/generate-recipes"
 
 # --- STYLING ---
 st.markdown("""
@@ -12,7 +14,7 @@ st.markdown("""
 
 # --- HEADER ---
 st.title("🍳 Leftover Alchemy")
-st.caption("Turning fridge sadness into belly happiness.")
+st.caption("Turning fridge sadness into belly happiness. 😋")
 
 # --- INPUTS ---
 with st.form("alchemy_form"):
@@ -24,45 +26,33 @@ with st.form("alchemy_form"):
             placeholder="e.g., 2 eggs, stale bread, cheese"
         )
         
-
     with col2:
-        # The "Pre-populated" choices
-        vibe_options = [
-            "Lazy & Quick", 
-            "Healthy & Clean", 
-            "Michelin Chef", 
-            "Hangover Cure", 
-            "High Protein", 
-            "✨ Custom Vibe..."  # The "Escape Hatch"
-        ]
-        
-        # User picks from the list
-        selected_vibe = st.selectbox("Vibe Check", vibe_options)
-        
-        # Logic: If they picked 'Custom', show a text box. 
-        # Otherwise, use what they picked.
-        if selected_vibe == "✨ Custom Vibe...":
-            custom_vibe = st.text_input("Describe your vibe", placeholder="e.g. 1950s Diner")
+        # Radio buttons allow instant selection and prevent "search" errors
+        # Note: Using a vertical list (horizontal=False) so "Custom" is clear
+        selected_vibe = st.radio(
+            "Current Vibe",
+            ["Lazy & Quick", "Michelin Star", "Healthy & Clean", "Hangover Cure", "Custom..."],
+            horizontal=False 
+        )
+
+        # Show the text input ONLY if they clicked "Custom..."
+        if selected_vibe == "Custom...":
+            custom_vibe = st.text_input("Describe your vibe", placeholder="e.g. Chinese Takeout")
             final_vibe = custom_vibe
         else:
             final_vibe = selected_vibe
 
-    # The button now submits the 'final_vibe'
     submitted = st.form_submit_button("Generate Concepts")
 
 # --- LOGIC ---
 if submitted and ingredients:
-    # Use 'final_vibe' if you added the dropdown logic, otherwise just 'vibe'
-    # Check if 'final_vibe' exists in your code, if not, change this back to 'vibe'
-    current_vibe = final_vibe if 'final_vibe' in locals() else vibe
-
     with st.spinner("Transmuting elements..."):
         try:
-            # 1. Prepare the payload
+            # 1. Prepare the payload with the correct vibe
             payload = {
                 "ingredients": ingredients,
-                "meal_type": meal_type,
-                "vibe": current_vibe
+                "meal_type": "Dinner", # Defaulting to Dinner, or you can add the dropdown back
+                "vibe": final_vibe
             }
             
             # 2. Send to backend
@@ -70,14 +60,17 @@ if submitted and ingredients:
             response.raise_for_status()
             data = response.json()
             
-            # 3. Check for recipes (Align this EXACTLY with 'data =' above)
+            # 3. Render the Michelin UI
             if "recipes" in data:
                 for r in data["recipes"]:
                     with st.expander(f"🏆 {r['title']}", expanded=True):
+                        
                         st.info(f"🧠 **The Hook:** {r.get('vibe_description', 'A perfect match.')}")
+                        
                         st.markdown("### 🔪 The Steps:")
                         for step in r['instructions']:
                             st.write(f"* {step}")
+                            
                         st.divider()
                         st.caption(f"**Ingredients:** {', '.join(r['ingredients'])}")
             else:
