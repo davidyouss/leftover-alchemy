@@ -22,16 +22,31 @@ col1, col2 = st.columns(2)
 with col1:
     ingredients = st.text_input("What's in the fridge?", "canned tuna, hot sauce, rice")
 with col2:
-    vibe = st.selectbox("Current Vibe", ["Spicy Comfort", "Healthy-ish", "Late Night Chaos", "Michelin Star", "Hangover Cure"])
-
+    meal_choice = st.selectbox("What are we making?", ["Breakfast", "Lunch", "Dinner", "Snack"])
+vibe_choice = st.text_input("What's the vibe?", placeholder="e.g. Cozy, Fancy, Lazy, High-Protein")
 # 3. The Logic
 if st.button("Generate Concepts", type="primary"):
     with st.spinner("Performing a little alchemy with what you've got..."):
         try:
             # Send data to your backend
-            payload = {
-                "ingredients": [x.strip() for x in ingredients.split(",")],
-                "vibe": vibe
+		payload = {
+    "ingredients": ingredients_input,
+    "meal_type": meal_choice,
+    "vibe": vibe_choice
+}
+            
+payload = {
+    "ingredients": ingredients_input,
+    "meal_type": meal_choice,
+    "vibe": vibe_choice
+}
+            response = requests.post(API_URL, json=payload)
+            
+            if response.status_code == 200:
+            }
+            response = requests.post(API_URL, json=payload)
+            
+            if response.status_code == 200:
             }
             response = requests.post(API_URL, json=payload)
             
