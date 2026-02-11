@@ -26,7 +26,7 @@ with col2:
 
 # 3. The Logic
 if st.button("Generate Concepts", type="primary"):
-    with st.spinner("Consulting the Culinary Psychologist..."):
+    with st.spinner("Performing a little alchemy with what you've got..."):
         try:
             # Send data to your backend
             payload = {
