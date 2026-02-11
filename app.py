@@ -14,7 +14,7 @@ st.markdown("""
 
 # --- HEADER ---
 st.title("🍳 Leftover Alchemy")
-st.caption("Turn your random groceries into Michelin-star concepts.")
+st.caption("Turning fridge sadness into belly happiness.")
 
 # --- INPUTS ---
 with st.form("alchemy_form"):
